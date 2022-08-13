@@ -1,7 +1,36 @@
 from datetime import datetime
 from flask_wtf import Form
+import enum
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
+from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, AnyOf, URL
+
+class GenreChoices(enum.Enum):
+    
+    Alternative = 'Alternative'
+    Blues = 'Blues'
+    Classical = 'Classical'
+    Country = 'Country'
+    Electronic = 'Electronic'
+    Folk = 'Folk'
+    Funk = 'Funk'
+    Hip_Hop ='Hip-Hop'
+    HeavyMetal = 'Heavy Metal'
+    Instrumental = 'Instrumental'
+    Jazz = 'Jazz'
+    Musical_Theatre = 'Musical Theatre'
+    Pop = 'Pop'
+    Punk = 'Punk'
+    R_B = 'R&B'
+    Reggae = 'Reggae'
+    RocknRoll = 'Rock n Roll'
+    SOUL = 'Soul'
+    OTHER = 'Other'   
+    
+    @staticmethod
+    def fetch_names():
+        return [item.value for item in GenreChoices]
+        
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -88,31 +117,10 @@ class VenueForm(Form):
     image_link = StringField(
         'image_link'
     )
-    genres = SelectMultipleField(
-        # TODO implement enum restriction
+    genres = QuerySelectField(
         'genres', validators=[DataRequired()],
-        choices=[
-            ('Alternative', 'Alternative'),
-            ('Blues', 'Blues'),
-            ('Classical', 'Classical'),
-            ('Country', 'Country'),
-            ('Electronic', 'Electronic'),
-            ('Folk', 'Folk'),
-            ('Funk', 'Funk'),
-            ('Hip-Hop', 'Hip-Hop'),
-            ('Heavy Metal', 'Heavy Metal'),
-            ('Instrumental', 'Instrumental'),
-            ('Jazz', 'Jazz'),
-            ('Musical Theatre', 'Musical Theatre'),
-            ('Pop', 'Pop'),
-            ('Punk', 'Punk'),
-            ('R&B', 'R&B'),
-            ('Reggae', 'Reggae'),
-            ('Rock n Roll', 'Rock n Roll'),
-            ('Soul', 'Soul'),
-            ('Other', 'Other'),
-        ]
-    )
+        query_factor = GenreChoices.fetch_names,
+        get_pk = lambda a: a, get_label=lambda a: a)
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
     )
@@ -125,8 +133,6 @@ class VenueForm(Form):
     seeking_description = StringField(
         'seeking_description'
     )
-
-
 
 class ArtistForm(Form):
     name = StringField(
@@ -192,45 +198,23 @@ class ArtistForm(Form):
         ]
     )
     phone = StringField(
-        # TODO implement validation logic for phone 
-        'phone'
+        'phone', validators=[DataRequired()]
     )
     image_link = StringField(
         'image_link'
     )
-    genres = SelectMultipleField(
+    genres = QuerySelectField(
         'genres', validators=[DataRequired()],
-        choices=[
-            ('Alternative', 'Alternative'),
-            ('Blues', 'Blues'),
-            ('Classical', 'Classical'),
-            ('Country', 'Country'),
-            ('Electronic', 'Electronic'),
-            ('Folk', 'Folk'),
-            ('Funk', 'Funk'),
-            ('Hip-Hop', 'Hip-Hop'),
-            ('Heavy Metal', 'Heavy Metal'),
-            ('Instrumental', 'Instrumental'),
-            ('Jazz', 'Jazz'),
-            ('Musical Theatre', 'Musical Theatre'),
-            ('Pop', 'Pop'),
-            ('Punk', 'Punk'),
-            ('R&B', 'R&B'),
-            ('Reggae', 'Reggae'),
-            ('Rock n Roll', 'Rock n Roll'),
-            ('Soul', 'Soul'),
-            ('Other', 'Other'),
-        ]
-     )
+        query_factor = GenreChoices.fetch_names,
+        get_pk = lambda a: a, get_label=lambda a: a)
+    
     facebook_link = StringField(
-        # TODO implement enum restriction
         'facebook_link', validators=[URL()]
      )
 
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[URL()]
      )
-
     seeking_venue = BooleanField( 'seeking_venue' )
 
     seeking_description = StringField(
